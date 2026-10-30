@@ -13,4 +13,4 @@ http.createServer(async (req, res) => {
     const body = await fs.readFile(file);
     res.writeHead(200, { 'Content-Type': types[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-store' }); res.end(body);
   } catch { res.writeHead(404); res.end('Not found'); }
-}).listen(port, '127.0.0.1', () => console.log(`Campus Loop: http://127.0.0.1:${port}`));
+}).listen(port, '127.0.0.1', () => console.log(`Campus Review: http://127.0.0.1:${port}`));

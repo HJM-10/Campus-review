@@ -1,0 +1,2 @@
+.site-shell{overflow-x:clip}.brand{font-size:25px}.match-card{min-height:516px}.question-area{padding-bottom:0}.question-area h2{min-height:74px}.question-area>p:not(.question-count){min-height:18px}.option{min-height:50px}.question-area h2:focus{outline:none}
+@media(max-width:700px){.brand{font-size:21px}.match-card{min-height:480px}.hero-copy h1{font-size:clamp(47px,12vw,76px)}.question-area h2{min-height:70px}.question-area>p:not(.question-count){min-height:34px}}

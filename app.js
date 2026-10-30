@@ -9,13 +9,10 @@ let mediaUnlocked = false;
 const screamMedia = $('scream-media');
 let soundNodes = [];
 let timers = [];
-let state = 'idle';
-let round = 0;
-let roundStarted = 0;
-let scores = [];
+let state = 'quiz';
+let questionIndex = 0;
+let transitioning = false;
 let scareImageReady = false;
-const periods = [1700, 1450, 1250];
-const positions = [[50,50],[68,40],[40,60]];
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const characterImage = $('character-image');
 function prepareCharacter() {
@@ -98,67 +95,43 @@ function tone(frequency, duration, volume = 0.04, type = 'sine', endFrequency = 
 }
 
 
-function startFocus() {
-  if (state !== 'idle') return;
-  initAudio(); round = 0; scores = [];
-  $('start-focus').hidden = true;
-  $('focus-intro').hidden = true;
-  $('focus-exit').hidden = false;
-  $('focus-target').hidden = false;
-  $('focus-field').classList.add('playing');
-  beginRound();
-  $('focus-target').focus({ preventScroll: true });
+const questions = [
+  { label:'THE PLACE', title:'Where do we<br>usually find you?', help:'Every campus has its characters. Pick your spot.', options:['The library. One more chapter.','The café. Always a conversation.','Somewhere between classes.'] },
+  { label:'THE TIMING', title:'When is campus<br>your kind of place?', help:'There’s a different rhythm to every hour.', options:['Early mornings. A fresh start.','Afternoons. Right in the middle.','After dark. When it gets quiet.'] },
+  { label:'THE HIGHLIGHT', title:'What do you love<br>most about campus?', help:'One last pick. What makes campus feel like you?', options:['The people and the community.','The little places to unwind.','Discovering something new.'] }
+];
+function renderQuestion(focus = false) {
+  const question=questions[questionIndex];
+  $('question-count').textContent=String(questionIndex+1).padStart(2,'0')+' / 03 — '+question.label;
+  $('question-title').innerHTML=question.title;
+  $('question-help').textContent=question.help;
+  document.querySelectorAll('.step').forEach((step,index)=>step.classList.toggle('active',index<=questionIndex));
+  $('options').replaceChildren();
+  question.options.forEach((label,index)=>{
+    const button=document.createElement('button');
+    button.className='option';
+    button.innerHTML='<span class="option-key" aria-hidden="true">'+String.fromCharCode(65+index)+'</span><span class="option-text"></span><span class="option-arrow" aria-hidden="true">↗</span>';
+    button.querySelector('.option-text').textContent=label;
+    button.addEventListener('click',()=>selectAnswer(button));
+    $('options').append(button);
+  });
+  transitioning=false;
+  if(focus)$('question-title').focus({preventScroll:true});
 }
-function beginRound() {
-  state = 'round';
-  const target = $('focus-target');
-  target.disabled = false;
-  target.classList.remove('ring-running','final-focus','caught');
-  target.style.setProperty('--target-x', positions[round][0] + '%');
-  target.style.setProperty('--target-y', positions[round][1] + '%');
-  target.style.setProperty('--ring-period', periods[round] + 'ms');
-  $('focus-count').textContent = 'ROUND ' + String(round + 1).padStart(2,'0') + ' / 03';
-  $('focus-title').textContent = ['Catch the rhythm.','You’ve got this.','One more target.'][round];
-  $('focus-help').textContent = 'Tap when the moving ring meets the circle.';
-  $('focus-feedback').textContent = '';
-  document.querySelectorAll('.step').forEach((step,index) => step.classList.toggle('active',index < round));
-  void target.offsetWidth;
-  target.classList.add('ring-running');
-  roundStarted = performance.now();
-}
-function catchTarget() {
-  if (state !== 'round') return;
-  state = 'feedback';
-  const phase = ((performance.now() - roundStarted) % periods[round]) / periods[round];
-  const score = Math.round(phase * 100);
-  scores.push(score);
-  $('focus-target').disabled = true;
-  $('focus-target').classList.add('caught');
-  tone(540 + round * 120, .1, .022, 'sine', 720 + round * 120);
-  $('focus-feedback').textContent = score >= 80 ? 'Right in sync.' : score >= 45 ? 'Nice catch.' : 'Keep the rhythm.';
-  document.querySelectorAll('.step').forEach((step,index) => step.classList.toggle('active', index <= round));
-  later(() => {
-    round++;
-    if (round < 3) beginRound(); else finalSync();
-  }, 340);
-}
-function finalSync() {
-  state = 'lock';
-  $('focus-count').textContent = 'THREE OF THREE / FINAL SYNC';
-  $('focus-title').textContent = 'Stay with the dot.';
-  $('focus-help').textContent = 'Keep your eyes on the centre for a moment.';
-  $('focus-feedback').textContent = '';
-  const target = $('focus-target');
-  target.classList.remove('ring-running','caught');
-  target.classList.add('final-focus');
-  target.style.setProperty('--target-x','50%');
-  target.style.setProperty('--target-y','50%');
-  stopAudio();
-  // Interrupt the focus task directly: no warning text, loader, or advance blackout.
-  later(() => {
-    if (reducedMotion.matches || !scareImageReady) showReveal();
-    else { $('home').hidden = true; showScare(); }
-  }, 1050);
+function selectAnswer(button) {
+  if(state!=='quiz'||transitioning)return;
+  transitioning=true;
+  initAudio();
+  // The final answer triggers the scare in this click handler. No timeout or loading stage.
+  if(questionIndex===questions.length-1){
+    if(reducedMotion.matches||!scareImageReady)showReveal();
+    else showScare();
+    return;
+  }
+  button.classList.add('selected');
+  document.querySelectorAll('.option').forEach(option=>{option.disabled=true;});
+  tone(470,.1,.02,'sine',620);
+  later(()=>{questionIndex++;renderQuestion(true);},180);
 }
 function scareSound() {
   if (!soundOn) return;
@@ -222,6 +195,7 @@ function synthScareSound() {
 }
 function showScare() {
   state = 'scare';
+  $('home').hidden = true;
   $('blackout').hidden = true;
   $('scare').hidden = false;
   $('skip-scare').focus();
@@ -242,18 +216,10 @@ function showReveal() {
   $('reveal-title').focus({ preventScroll: true });
 }
 function resetExperience() {
-  clearTimers(); stopAudio(); state = 'idle'; round = 0; scores = [];
-  $('home').hidden = false; $('blackout').hidden = true; $('scare').hidden = true; $('reveal').hidden = true;
-  $('start-focus').hidden = false; $('focus-intro').hidden = false; $('focus-exit').hidden = true; $('focus-target').hidden = true;
-  $('focus-target').classList.remove('ring-running','final-focus','caught');
-  $('focus-field').classList.remove('playing');
-  $('focus-count').textContent = 'READY WHEN YOU ARE';
-  $('focus-title').textContent = 'Find your focus.';
-  $('focus-help').textContent = 'Tap the centre when the moving ring meets the circle.';
-  $('focus-feedback').textContent = ''; $('share-status').textContent = '';
-  document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
-  window.scrollTo(0, 0);
-  $('start-focus').focus({ preventScroll: true });
+  clearTimers();stopAudio();state='quiz';questionIndex=0;transitioning=false;
+  $('home').hidden=false;$('blackout').hidden=true;$('scare').hidden=true;$('reveal').hidden=true;
+  $('share-status').textContent='';renderQuestion();window.scrollTo(0,0);
+  $('options').querySelector('button').focus({preventScroll:true});
 }
 $('sound').addEventListener('click', () => {
   soundOn = !soundOn;
@@ -263,21 +229,19 @@ $('sound').addEventListener('click', () => {
   $('sound-icon').textContent = soundOn ? '◖))' : '◖×';
   if (soundOn) initAudio(); else stopAudio();
 });
-$('start-focus').addEventListener('click',startFocus);
-$('focus-target').addEventListener('click',catchTarget);
-$('focus-exit').addEventListener('click',resetExperience);
 $('skip-scare').addEventListener('click',showReveal);
 $('replay').addEventListener('click',resetExperience);
 $('share').addEventListener('click', async () => {
   const url = new URL(location.href); url.hash = ''; url.search = '';
-  const data = { title:'Campus Loop',text:'Take a little focus break. Three targets. One rhythm.',url:url.href };
+  const data = { title:'Campus Review',text:'What do you love about your campus? Three quick questions.',url:url.href };
   try {
     if (navigator.share) await navigator.share(data);
     else if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(url.href); $('share-status').textContent = 'Link copied. Keep the surprise between us.'; }
-    else $('share-status').textContent = 'Copy the page address from your browser to share the loop.';
-  } catch (error) { if (error.name !== 'AbortError') $('share-status').textContent = 'Copy the page address from your browser to share the loop.'; }
+    else $('share-status').textContent = 'Copy the page address from your browser to share Campus Review.';
+  } catch (error) { if (error.name !== 'AbortError') $('share-status').textContent = 'Copy the page address from your browser to share Campus Review.'; }
 });
-const experienceActive = () => ['round','feedback','lock','scare','blackout'].includes(state);
+const experienceActive = () => ['scare','blackout'].includes(state);
 document.addEventListener('keydown',event => { if (event.key === 'Escape' && experienceActive()) showReveal(); });
 document.addEventListener('visibilitychange',() => { if (document.hidden && experienceActive()) showReveal(); });
-window.addEventListener('pagehide',() => { if (experienceActive()) showReveal(); else { clearTimers(); stopAudio(); } });
+window.addEventListener('pagehide',() => { if (experienceActive()) showReveal(); else if(transitioning) resetExperience(); else { clearTimers(); stopAudio(); } });
+renderQuestion();

@@ -1,7 +1,13 @@
 {
-  "name": "campus-loop",
+  "name": "campus-review",
   "version": "1.0.0",
   "private": true,
-  "scripts": { "dev": "node server.mjs", "start": "node server.mjs", "check": "node --check app.js" },
-  "engines": { "node": ">=20" }
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "check": "node --check app.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }
