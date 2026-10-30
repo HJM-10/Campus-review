@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ec">
+  <meta name="description" content="A little curiosity. A new campus connection. Find your campus match with Campus Loop.">
+  <meta property="og:title" content="Campus Loop — Find your campus match">
+  <meta property="og:description" content="Three quick picks. One little discovery. What’s your campus energy?">
+  <title>Campus Loop — Find your campus match</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="experience.css">
+  <link rel="preload" as="image" href="assets/the-quiet-one.webp">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="site-shell" id="home">
+    <header class="nav"><a class="brand" href="./" aria-label="Campus Loop home"><span class="brand-icon" aria-hidden="true">↗</span>campus loop<span class="brand-dot">®</span></a><span class="nav-note">A LITTLE OUTSIDE YOUR ROUTINE</span><button class="sound" id="sound" aria-pressed="true" aria-label="Turn sound off"><span id="sound-icon" aria-hidden="true">◖))</span><span id="sound-label">Sound on</span></button></header>
+    <main>
+      <div class="eyebrow"><span class="status-dot"></span> THE CAMPUS CONNECTION EXPERIMENT <span class="edition">VOL. 01 / FALL ’26</span></div>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy"><span class="tiny-label">GOOD THINGS START WITH A LITTLE CURIOSITY.</span><h1 id="hero-title">Same campus.<br>New <span class="serif">energy.</span><span class="spark" aria-hidden="true">✳</span></h1><p class="intro">Your next campus moment is closer than you think. Make three quick picks. See where the loop takes you.</p><a class="text-link" href="#match">Find your campus match <span aria-hidden="true">↘</span></a><div class="orbit-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="orbit-core">a little<br><i>unexpected.</i></div><span class="art-cross cross-one">+</span><span class="art-cross cross-two">+</span><span class="art-caption">STEP OUT OF THE ORDINARY ↗</span></div></div>
+        <div class="match-card" id="match"><div class="card-top"><span class="tiny-label">YOUR NEXT LITTLE DISCOVERY</span><span class="card-symbol" aria-hidden="true">↗</span></div><div class="steps" aria-label="Quiz progress"><span class="step active"></span><span class="step"></span><span class="step"></span></div><div class="question-area"><p class="question-count" id="question-count">01 / 03 — THE PLACE</p><h2 id="question-title" tabindex="-1">Where do we<br>usually find you?</h2><p id="question-help">Every campus has its characters. Pick your spot.</p><div class="options" id="options"></div></div><div class="result-panel" id="result" hidden><span class="profile-code" id="profile-code"></span><div class="profile-symbol" id="profile-symbol" aria-hidden="true">◎</div><p class="profile-eyebrow">YOUR CAMPUS ENERGY IS</p><h2 id="profile-title" tabindex="-1"></h2><p id="profile-description"></p><p class="profile-tags" id="profile-tags"></p><button class="open-card" id="open-card"><span id="open-card-label">Open my campus card</span><span aria-hidden="true">↗</span></button><button class="result-reset" id="result-reset">Try different picks</button></div><div class="card-bottom"><span><span class="small-star">✳</span> No sign-up. Just curiosity.</span><span>~ 30 SEC</span></div></div>
+      </section>
+      <section class="how" aria-label="How it works"><div class="how-heading"><span class="tiny-label">THE IDEA IS SIMPLE</span><h2>A tiny detour.<br>A different kind of day.</h2></div><div class="how-item"><span class="how-number">01</span><h3>Go with your gut.</h3><p>Three picks. No right answers.<br>Just your kind of campus energy.</p></div><div class="how-item"><span class="how-number">02</span><h3>Let it connect.</h3><p>We’ll put your picks together.<br>Find your kind of campus energy.</p></div><div class="how-item"><span class="how-number">03</span><h3>Meet your moment.</h3><p>Your campus personality.<br>A little card. A little you.</p></div></section>
+    </main>
+    <footer><span>campus loop <span class="footer-slash">/</span> Made for the in-between moments.</span><span>An independent student experience · No personal data collected.</span></footer>
+  </div>
+  <div class="blackout" id="blackout" hidden aria-hidden="true"></div>
+  <section class="scare scare-v2" id="scare" hidden aria-label="Halloween surprise"><img id="character-image" class="character-image" src="assets/the-quiet-one.webp" alt="" aria-hidden="true" fetchpriority="high"><div class="scare-vignette" aria-hidden="true"></div><button class="exit-button" id="skip-scare">Skip →</button></section>
+  <section class="reveal" id="reveal" hidden aria-labelledby="reveal-title"><div class="reveal-top"><a class="brand" href="./"><span class="brand-icon">↗</span>campus loop</a><span>THE SECRET’S OUT.</span></div><div class="reveal-content"><span class="reveal-badge">YOU JUST GOT LOOPED.</span><div class="pumpkin" aria-hidden="true">✳</div><p class="reveal-kicker">A LITTLE TRICK. A LOT OF SPIRIT.</p><h1 id="reveal-title" tabindex="-1">Trick <span class="serif">or</span><br>Treat<span class="reveal-period">.</span></h1><div class="society"><img id="society-logo" src="assets/society-mark.svg" alt="CS Society mark"><div><strong>by CS Society</strong><span>Computer Science Society</span></div></div><p class="reveal-description">Your campus match? A Halloween prank.<br>Consider yourself officially spooked. Happy Halloween!</p><div class="reveal-actions"><button class="primary-button" id="replay">Go another round <span>↗</span></button><button class="secondary-button" id="share">Pass the curiosity on <span>↗</span></button></div><p class="share-status" id="share-status" role="status" aria-live="polite"></p></div><div class="reveal-bottom"><span>NO CURSES. JUST CODE.</span><span>31 OCTOBER / HAPPY HALLOWEEN</span></div></section>
+</body>
+</html>
